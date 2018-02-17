@@ -20,23 +20,36 @@ var params = {ivo_johnny: 'nodejs'};
 //Creating a function for the tweeter request
 function myTweets(){
     if (argument1 === "my-tweets"){
-    
-    //My tweets are colored for more fun, better display, and to easily distiguish them from the other data
-    console.log("\x1b[4mMy last tweets:\x1b[0m");
-    //following npm documentation to get the data from twitter
-    client.get('statuses/user_timeline', params, function(error, tweets, response) {
-        if (!error) {
-            //limiting it to 20 tweets and also if there are less than 20 tweets overall displaying the ones available only 
-            for (var i = 0; i < tweets.length && i < 20; i++) {
-                console.log("\x1b[32m" + tweets[i].text + "\x1b[0m   " + tweets[i].created_at);
+        
+        //My tweets are colored for more fun, better display, and to easily distiguish them from the other data
+        console.log("\x1b[4mMy last tweets:\x1b[0m");
+        //following npm documentation to get the data from twitter
+        client.get('statuses/user_timeline', params, function(error, tweets, response) {
+            if (!error) {
+                //limiting it to 20 tweets and also if there are less than 20 tweets overall displaying the ones available only 
+                for (var i = 0; i < tweets.length && i < 20; i++) {
+                    console.log("\x1b[32m" + tweets[i].text + "\x1b[0m   " + tweets[i].created_at);
+                    
+                    // Bonus... append data to log.txt file
+                    fs.appendFile("log.txt", "\n" + tweets[i].text + "\n" + tweets[i].created_at, function(err) {
+                        // If an error was experienced we say it.
+                        if (err) {
+                            console.log(err);
+                        }                      
+                        // If no error is experienced, we'll log the phrase "Twitter Content Added" to our node console.
+                        else {
+                            console.log("Twitter Content Added!");
+                        }                     
+                    });
+                }
+            } else {
+                console.log(error);
             }
-        } else {
-            console.log(error);
-        }
-    });
-}
+        });
+    }
 }
 myTweets();
+
 //-----------------------------------Spotify----------------------------------
 
 var Spotify = require('node-spotify-api');
@@ -74,7 +87,22 @@ function spotifyThis(){
             //Using for loop gives me an option to increase the limit to 3 songs for example and display the top 3 songs returned
             //The strings are colored for more fun, better display, and to easily distiguish them from the other data
             for (var k = 0; k < data.tracks.items.length; k++) { 
-                console.log("\n\x1b[36mArtist:\x1b[0m " + data.tracks.items[k].artists[0].name  + "\n\x1b[36mSong's name:\x1b[0m " + data.tracks.items[k].name + "\n\x1b[36mPreview Link:\x1b[0m " + data.tracks.items[k].preview_url + "\n\x1b[36mAlbum:\x1b[0m: " + data.tracks.items[k].album.name); 
+                console.log("\n\x1b[36mArtist:\x1b[0m " + data.tracks.items[k].artists[0].name  + "\n\x1b[36mSong's name:\x1b[0m " 
+                + data.tracks.items[k].name + "\n\x1b[36mPreview Link:\x1b[0m " + data.tracks.items[k].preview_url 
+                + "\n\x1b[36mAlbum:\x1b[0m: " + data.tracks.items[k].album.name);
+                
+                // Bonus... append data to log.txt file
+                fs.appendFile("log.txt", "\n" + data.tracks.items[k].artists[0].name + "\n" + data.tracks.items[k].name 
+                + "\n" + data.tracks.items[k].preview_url + "\n" + data.tracks.items[k].album.name, function(err) {
+                    // If an error was experienced .
+                    if (err) {
+                        console.log(err);
+                    }
+                    // If no error is experienced, we'll log the phrase "Spotify Content Added" to our node console.
+                    else {
+                        console.log("Spotify Content Added!");
+                    }
+                }); 
             } 
             //If I want to return only one song without having the option to increase the limit I can use the console.log code below
             // console.log("\x1b[36mArtist:\x1b[0m " + data.tracks.items[0].artists[0].name  + "\n\x1b[36mSong's name:\x1b[0m " + data.tracks.items[0].name + "\n\x1b[36mPreview Link:\x1b[0m " + data.tracks.items[0].preview_url + "\n\x1b[36mAlbum:\x1b[0m: " + data.tracks.items[0].album.name);
@@ -88,46 +116,61 @@ spotifyThis();
 function movieThis(){
     //Checking to see if user's request is to get movie informatiion
     if (argument1 === "movie-this") {
-    console.log("\x1b[4mMy Movies:\x1b[0m");
-    // Store all of the arguments in an array
-    var nodeArguments = process.argv;
-    // Create an empty variable for holding the movie name
-    var movieName = "";
-    // Loop through all the words in the node argument
-    // And do a for-loop to handle the inclusion of "+"s
-    for (var i = 3; i < nodeArguments.length; i++) {
-        if (i > 3 && i < nodeArguments.length) {
-            movieName = movieName + "+" + nodeArguments[i];   
-        } else {
-            movieName += nodeArguments[i];
+        console.log("\x1b[4mMy Movies:\x1b[0m");
+        // Store all of the arguments in an array
+        var nodeArguments = process.argv;
+        // Create an empty variable for holding the movie name
+        var movieName = "";
+        // Loop through all the words in the node argument
+        // And do a for-loop to handle the inclusion of "+"s
+        for (var i = 3; i < nodeArguments.length; i++) {
+            if (i > 3 && i < nodeArguments.length) {
+                movieName = movieName + "+" + nodeArguments[i];   
+            } else {
+                movieName += nodeArguments[i];
+            }
         }
-    }
-    //If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.
-    //Here I check if the user requests a movie information but leaves argument 2  blank
-    if (argument1 === "movie-this" && argument2 === undefined){
-        movieName = "Mr. Nobody";
-    }
-    // Then run a request to the OMDB API with the movie specified
-    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
-    
-    request(queryUrl, function(error, response, body) {       
-        // If the request is successful
-        if (!error && response.statusCode === 200) {           
-            // Parse the body of the site and recover just the values we need.
-            //The strings are colored for more fun, better display, and to easily distiguish them from the other data
-            console.log("\x1b[31mTitle: \x1b[0m" + JSON.parse(body).Title);
-            console.log("\x1b[31mRelease Year: \x1b[0m" + JSON.parse(body).Year);
-            console.log("\x1b[31mIMBD Rating: \x1b[0m" + JSON.parse(body).imdbRating);
-            console.log("\x1b[31mRotten Tomatoes Rating: \x1b[0m" + JSON.parse(body).Ratings[1].Value);
-            console.log("\x1b[31mCountry where the movie was produced: \x1b[0m" + JSON.parse(body).Country);
-            console.log("\x1b[31mLanguage of the movie: \x1b[0m" + JSON.parse(body).Language);
-            console.log("\x1b[31mPlot of the movie: \x1b[0m" + JSON.parse(body).Plot);
-            console.log("\x1b[31mActors in the movie: \x1b[0m" + JSON.parse(body).Actors);
+        //If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.
+        //Here I check if the user requests a movie information but leaves argument 2  blank
+        if (argument1 === "movie-this" && argument2 === undefined){
+            movieName = "Mr. Nobody";
         }
-    });
-}
+        // Then run a request to the OMDB API with the movie specified
+        var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+        
+        request(queryUrl, function(error, response, body) {       
+            // If the request is successful
+            if (!error && response.statusCode === 200) {           
+                // Parse the body of the site and recover just the values we need.
+                //The strings are colored for more fun, better display, and to easily distiguish them from the other data
+                console.log("\x1b[31mTitle: \x1b[0m" + JSON.parse(body).Title);
+                console.log("\x1b[31mRelease Year: \x1b[0m" + JSON.parse(body).Year);
+                console.log("\x1b[31mIMBD Rating: \x1b[0m" + JSON.parse(body).imdbRating);
+                console.log("\x1b[31mRotten Tomatoes Rating: \x1b[0m" + JSON.parse(body).Ratings[1].Value);
+                console.log("\x1b[31mCountry where the movie was produced: \x1b[0m" + JSON.parse(body).Country);
+                console.log("\x1b[31mLanguage of the movie: \x1b[0m" + JSON.parse(body).Language);
+                console.log("\x1b[31mPlot of the movie: \x1b[0m" + JSON.parse(body).Plot);
+                console.log("\x1b[31mActors in the movie: \x1b[0m" + JSON.parse(body).Actors);
+                
+                // Bonus... append data to log.txt file
+                fs.appendFile("log.txt", "\n" + JSON.parse(body).Title + "\n" + JSON.parse(body).Year + "\n" + JSON.parse(body).Ratings[1].Value 
+                + "\n" + JSON.parse(body).Country + "\n" + JSON.parse(body).Language + "\n" + JSON.parse(body).Plot + "\n"
+                + JSON.parse(body).Actors, function(err) {
+                    // If an error was experienced we say it.
+                    if (err) {
+                        console.log(err);
+                    }              
+                    // If no error is experienced, we'll log the phrase "Content Added" to our node console.
+                    else {
+                        console.log("Movie Content Added!");
+                    }             
+                });
+            }
+        });
+    }
 }
 movieThis();
+
 //---------------------------do-what-it-says----------------------------------
 
 //Core Node package for reading and writing files
