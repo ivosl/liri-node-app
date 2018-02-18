@@ -29,7 +29,8 @@ Again for better display the above text is shown in blue, while the returned inf
 The songs displayed could be easily adjusted from showing only one to any number just by changing the limit here:
     ```javascript
     spotify.search({ type: 'track', query: songName, limit: 1 }
-    ```.
+    ```
+    
 Code that follows is written as a for loop, so it can take more than one return and properly and orderly display a different number of songs with the corresponding info just by changing the limit number in the above code. Here, limit number is adjusted to 3 and it returns the first 3 songs with the corresponding info
 
 ![Spotify limit 3 return](/images/limit-3.png)
