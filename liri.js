@@ -76,7 +76,7 @@ function spotifyThis(){
             songName = argument2;
         }
         //Following npm documentation to get the data from spotify and limiting it to one match
-        spotify.search({ type: 'track', query: songName, limit: 1 }, function(err, data) {
+        spotify.search({ type: 'track', query: songName, limit: 3 }, function(err, data) {
             if (err) {
                 return console.log('Error occurred: ' + err);
             }
