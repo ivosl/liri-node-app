@@ -66,7 +66,7 @@ In addition to the above functions if you run ```node liri.js do-what-it-says```
 
 ### Appending
 
-All the information that is returned and displayed in the terminal/bash window is recorded by being appended to the log.txt file.
+All the information that is returned and displayed in the terminal/bash window is recorded by being appended to log.txt file
 ![Appending](/images/append.png)
 
 
