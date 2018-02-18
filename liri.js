@@ -32,14 +32,10 @@ function myTweets(){
                     
                     // Bonus... append data to log.txt file
                     fs.appendFile("log.txt", "\n" + tweets[i].text + "\n" + tweets[i].created_at, function(err) {
-                        // If an error was experienced we say it.
+                        // If an error was experienced it's logged.
                         if (err) {
                             console.log(err);
-                        }                      
-                        // If no error is experienced, we'll log the phrase "Twitter Content Added" to our node console.
-                        else {
-                            console.log("Twitter Content Added!");
-                        }                     
+                        }                    
                     });
                 }
             } else {
@@ -98,7 +94,7 @@ function spotifyThis(){
                     if (err) {
                         console.log(err);
                     }
-                    // If no error is experienced, we'll log the phrase "Spotify Content Added" to our node console.
+                    // If no error is experienced, log the phrase "Spotify Content Added" to the node console.
                     else {
                         console.log("Spotify Content Added!");
                     }
